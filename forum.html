@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Secret RP | Доска жалоб</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: 'Segoe UI', 'Roboto', 'Courier New', monospace;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* шапка в стиле Secret RP */
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 3px solid #9b59b6;
+            margin-bottom: 30px;
+            background: #0f0f0f;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 0 15px rgba(155, 89, 182, 0.3);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #c39bd3, #6c3483);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 8px rgba(155, 89, 182, 0.5);
+        }
+
+        .header p {
+            color: #aaa;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .badge {
+            background: #1f1f1f;
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            margin-top: 12px;
+            border-left: 3px solid #9b59b6;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #1c1c1c;
+            border: none;
+            color: #ddd;
+            padding: 10px 28px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            border-radius: 40px;
+            transition: 0.2s;
+            box-shadow: 0 2px 5px black;
+        }
+
+        .filter-btn.active {
+            background: #8e44ad;
+            color: white;
+            box-shadow: 0 0 10px #bb8fce;
+        }
+
+        .filter-btn:hover {
+            background: #2d2d2d;
+            transform: translateY(-2px);
+        }
+
+        .complain-card {
+            background: #111;
+            border-radius: 28px;
+            padding: 25px;
+            margin-bottom: 40px;
+            border: 1px solid #2c2c2c;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .complain-card h2 {
+            font-size: 1.6rem;
+            border-left: 5px solid #9b59b6;
+            padding-left: 18px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cfcfcf;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 16px;
+            color: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #bb8fce;
+            box-shadow: 0 0 6px rgba(155, 89, 182, 0.4);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-submit {
+            background: #6c3483;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 40px;
+            cursor: poi\
+
+nter;
+            transition: 0.2s;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .btn-submit:hover {
+            background: #9b59b6;
+            box-shadow: 0 0 12px #bb8fce;
+            transform: scale(1.01);
+        }
+
+        .complaints-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .complaint-item {
+            background: #0e0e0e;
+            border-radius: 24px;
+            padding: 20px 25px;
+            border-left: 8px solid #9b59b6;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px black;
+        }
+
+        .complaint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .player-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #d7bde2;
+        }
+
+        .complaint-type {
+            background: #2a2a2a;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .type-player {
+            border-left: 3px solid #f39c12;
+        }
+
+        .type-admin {
+            border-left: 3px solid #e74c3c;
+            background: #2a1515;
+        }
+
+        .complaint-reason {
+            font-size: 1rem;
+            margin: 12px 0;
+            line-height: 1.4;
+            background: #151515;
+            padding: 12px;
+            border-radius: 18px;
+        }
+
+        .evidence {
+            color: #bcbcbc;
+            font-size: 0.85rem;
+            border-top: 1px solid #2c2c2c;
+            padding-top: 12px;
+            margin-top: 8px;
+            word-break: break-word;
+        }
+
+        .date {
+            font-size: 0.7rem;
+            color: #6c6c6c;
+            text-align: right;
+            margin-top: 12px;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            background: #0c0c0c;
+            border-radius: 40px;
+            color: #888;
+            font-style: italic;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #3f3f3f;
+            border-top: 1px solid #222;
+            padding-top: 25px;
+        }
+
+        max-width: 650px {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .complaint-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>SECRET RP 🕶️</h1>
+        <p>▸ приватная доска жалоб ◂</p>
+        <div class="badge">🔮 Жалобы на игроков / Администрацию 🔮</div>
+    </div>
+
+    <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">ВСЕ ЖАЛОБЫ</button>
+        <button class="filter-btn" data-filter="player">👥 НА ИГРОКОВ</button>
+        <button class="filter-btn" data-filter="admin">🛡️ НА АДМИНИСТРАЦИЮ</button>
+    </div>
+
+    <div class="complain-card">
+        <h2>✧ ОСТАВИТЬ ЖАЛОБУ ✧</h2>
+        <div class="form-group">
+            <label>Ваш ник (публично)</label>
+            <input type="text" id="authorName" placeholder="Как вас называть? (отобразится в жалобе)" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label>Тип жалобы</label>
+            <select id="complainType">
+                <option value="player">👥 Жалоба на ИГРОКА</option>
+                <option value="admin">⚙️ Жалоба на АДМИНИСТРАЦИЮ</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Нарушитель / Ник администратора</label>
+            <input type="text" id="targetName" placeholder="Ник обидчика / админа" required>
+        </div>
+        <div class="form-group">
+            <label>Суть нарушения / Описание ситуации</label>
+<textarea id="description" placeholder="Подробно опишите: где, когда, что произошло..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Доказательства (скрины / видео / свидетели) — текстовая ссылка или описание</label>
+            <input type="text" id="evidence" placeholder="Например: ссылка на скрин или id записи">
+        </div>
+        <button class="btn-submit" id="submitComplaint">▸ ОПУБЛИКОВАТЬ ЖАЛОБУ ◂</button>
+    </div>
+
+    <div style="margin: 10px 0 20px 0; display: flex; justify-content: space-between; align-items: baseline;">
+        <h2 style="border-left: 4px solid #9b59b6; padding-left: 15px;">📢 Активные жалобы</h2>
+        <button id="clearAllBtn" style="background: none; border: 1px solid #4a4a4a; padding: 6px 15px; border-radius: 40px; color: #aaa; cursor: pointer;">🗑️ Очистить все</button>
+    </div>
+
+    <div id="complaintsContainer" class="complaints-list">
+        <div class="empty-msg">🕯️ Жалоб пока нет. Будь первым, кто восстановит справедливость на Secret RP.</div>
+    </div>
+    <footer>
+        SECRET RP · доска для жалоб на игроков и администрацию · все данные хранятся локально в браузере
+    </footer>
+</div>
+
+<script>
+    const STORAGE_KEY = "secretrp_complaints";
+
+    function loadComplaints() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            try {
+                return JSON.parse(stored);
+            } catch(e) { 
+                return []; 
+            }
+        }
+        return [
+            {
+                id: Date.now() + 1,
+                author: "ShadowAgent",
+                type: "player",
+                target: "DarkKiller",
+                description: "Мешает отыгрывать, постоянно гриферует, игнорирует правила RP.",
+                evidence: "видео с записью экрана",
+                timestamp: new Date(Date.now() - 86400000).toLocaleString()
+            },
+            {
+                id: Date.now() + 2,
+                author: "VeteranRP",
+                type: "admin",
+                target: "Admin_Max",
+                description: "Выдал предупреждение без объяснения причин, не реагирует на вопросы.",
+                evidence: "скриншот чата",
+                timestamp: new Date(Date.now() - 43200000).toLocaleString()
+            }
+        ];
+    }
+
+    let complaints = loadComplaints();
+    let currentFilter = "all";
+
+    function saveComplaints() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(complaints));
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "'");
+    }
+
+    function renderComplaints() {
+        const container = document.getElementById("complaintsContainer");
+        if (!container) return;
+
+        let filtered = [];
+        if (currentFilter === "all") filtered = [...complaints];
+        else if (currentFilter === "player") filtered = complaints.filter(c => c.type === "player");
+        else if (currentFilter === "admin") filtered = complaints.filter(c => c.type === "admin");
+
+        filtered.sort((a,b) => b.id - a.id);
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<div class="empty-msg">🔮 Нет жалоб по выбранному фильтру. Напиши о проблеме выше. 🔮</div>`;
+            return;
+        }
+
+        let html = "";
+        for (let comp of filtered) {
+            const typeLabel = comp.type === "player" ? "👥 ЖАЛОБА НА ИГРОКА" : "⚙️ ЖАЛОБА НА АДМИНИСТРАЦИЮ";
+            const typeClass = comp.type === "player" ? "type-player" : "type-admin";
+            html += `
+                <div class="complaint-item">
+                    <div class="complaint-header">
+                        <span class="player-name">${escapeHtml(comp.target)}</span>
+                        <span class="complaint-type ${typeClass}">${typeLabel}</span>
+</div>
+                    <div style="font-size: 0.85rem; color: #bbbbbb;">📛 Отправитель: ${escapeHtml(comp.author || "Аноним")}</div>
+                    <div class="complaint-reason">
+                        📌 ${escapeHtml(comp.description)}
+                    </div>
+                    <div class="evidence">
+                        🧾 Доказательства: ${comp.evidence ? escapeHtml(comp.evidence) : "не указаны"}
+                    </div>
+                    <div class="date">
+                        🕒 ${comp.timestamp || "неизвестная дата"}
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    }
+
+    function addComplaint(author, type, target, description, evidence) {
+        if (!target || target.trim() === "") {
+            alert("❌ Укажите ник нарушителя или администратора!");
+            return false;
+        }
+        if (!description || description.trim() === "") {
+            alert("❌ Опишите суть нарушения, чтобы администрация разобралась.");
+            return false;
+        }
+        const newComplaint = {
+            id: Date.now(),
+            author: author ? author.trim() : "Аноним",
+            type: type,
+            target: target.trim(),
+            description: description.trim(),
+            evidence: evidence ? evidence.trim() : "не приложено",
+            timestamp: new Date().toLocaleString()
+        };
+        complaints.unshift(newComplaint);
+        saveComplaints();
+        renderComplaints();
+        return true;
+    }
+
+    function clearAllComplaints() {
+        if (confirm("⚠️ ВНИМАНИЕ! Все жалобы будут удалены навсегда. Вы уверены?")) {
+            complaints = [];
+            saveComplaints();
+            renderComplaints();
+        }
+    }
+
+    function bindFilters() {
+        const btns = document.querySelectorAll(".filter-btn");
+        btns.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const filter = btn.getAttribute("data-filter");
+                if (filter === "all") currentFilter = "all";
+                else if (filter === "player") currentFilter = "player";
+                else if (filter === "admin") currentFilter = "admin";
+                
+                btns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                renderComplaints();
+            });
+        });
+    }
+
+    function initForm() {
+        const submitBtn = document.getElementById("submitComplaint");
+        if (submitBtn) {
+            submitBtn.addEventListener("click", () => {
+                const author = document.getElementById("authorName").value;
+                const type = document.getElementById("complainType").value;
+                const target = document.getElementById("targetName").value;
+                const description = document.getElementById("description").value;
+                const evidence = document.getElementById("evidence").value;
+                
+                const success = addComplaint(author, type, target, description, evidence);
+                if (success) {
+                    document.getElementById("targetName").value = "";
+                    document.getElementById("description").value = "";
+                    document.getElementById("evidence").value = "";
+                    alert("✅ Жалоба отправлена! Администрация Secret RP рассмотрит заявку.");
+                }
+            });
+        }
+
+        const clearBtn = document.getElementById("clearAllBtn");
+        if (clearBtn) {
+            clearBtn.addEventListener("click", clearAllComplaints);
+        }
+    }
+
+    function start() {
+        bindFilters();
+        initForm();
+        renderComplaints();
+    }
+
+    start();
+</script>
+</body>
+</html> <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Secret RP | Доска жалоб</title>
+    <style>
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: 'Segoe UI', 'Roboto', 'Courier New', monospace;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* шапка в стиле Secret RP */
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 3px solid #9b59b6;
+            margin-bottom: 30px;
+            background: #0f0f0f;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 0 15px rgba(155, 89, 182, 0.3);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #c39bd3, #6c3483);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 8px rgba(155, 89, 182, 0.5);
+        }
+
+        .header p {
+            color: #aaa;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .badge {
+            background: #1f1f1f;
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            margin-top: 12px;
+            border-left: 3px solid #9b59b6;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #1c1c1c;
+            border: none;
+            color: #ddd;
+            padding: 10px 28px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            border-radius: 40px;
+            transition: 0.2s;
+            box-shadow: 0 2px 5px black;
+        }
+
+        .filter-btn.active {
+            background: #8e44ad;
+            color: white;
+            box-shadow: 0 0 10px #bb8fce;
+        }
+
+        .filter-btn:hover {
+            background: #2d2d2d;
+            transform: translateY(-2px);
+        }
+
+        .complain-card {
+            background: #111;
+            border-radius: 28px;
+            padding: 25px;
+            margin-bottom: 40px;
+            border: 1px solid #2c2c2c;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .complain-card h2 {
+            font-size: 1.6rem;
+            border-left: 5px solid #9b59b6;
+            padding-left: 18px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cfcfcf;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 16px;
+            color: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #bb8fce;
+            box-shadow: 0 0 6px rgba(155, 89, 182, 0.4);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-submit {
+            background: #6c3483;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .btn-submit:hover {
+            background: #9b59b6;
+            box-shadow: 0 0 12px #bb8fce;
+transform: scale(1.01);
+        }
+
+        .complaints-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .complaint-item {
+            background: #0e0e0e;
+            border-radius: 24px;
+            padding: 20px 25px;
+            border-left: 8px solid #9b59b6;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px black;
+        }
+
+        .complaint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .player-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #d7bde2;
+        }
+
+        .complaint-type {
+            background: #2a2a2a;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .type-player {
+            border-left: 3px solid #f39c12;
+        }
+
+        .type-admin {
+            border-left: 3px solid #e74c3c;
+            background: #2a1515;
+        }
+
+        .complaint-reason {
+            font-size: 1rem;
+            margin: 12px 0;
+            line-height: 1.4;
+            background: #151515;
+            padding: 12px;
+            border-radius: 18px;
+        }
+
+        .evidence {
+            color: #bcbcbc;
+            font-size: 0.85rem;
+            border-top: 1px solid #2c2c2c;
+            padding-top: 12px;
+            margin-top: 8px;
+            word-break: break-word;
+        }
+
+        .date {
+            font-size: 0.7rem;
+            color: #6c6c6c;
+            text-align: right;
+            margin-top: 12px;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            background: #0c0c0c;
+            border-radius: 40px;
+            color: #888;
+            font-style: italic;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #3f3f3f;
+            border-top: 1px solid #222;
+            padding-top: 25px;
+        }
+
+        max-width: 650px {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .complaint-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>SECRET RP 🕶️</h1>
+        <p>▸ приватная доска жалоб ◂</p>
+        <div class="badge">🔮 Жалобы на игроков / Администрацию 🔮</div>
+    </div>
+
+    <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">ВСЕ ЖАЛОБЫ</button>
+        <button class="filter-btn" data-filter="player">👥 НА ИГРОКОВ</button>
+        <button class="filter-btn" data-filter="admin">🛡️ НА АДМИНИСТРАЦИЮ</button>
+    </div>
+
+    <div class="complain-card">
+        <h2>✧ ОСТАВИТЬ ЖАЛОБУ ✧</h2>
+        <div class="form-group">
+            <label>Ваш ник (публично)</label>
+            <input type="text" id="authorName" placeholder="Как вас называть? (отобразится в жалобе)" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label>Тип жалобы</label>
+            <select id="complainType">
+                <option value="player">👥 Жалоба на ИГРОКА</option>
+                <option value="admin">⚙️ Жалоба на АДМИНИСТРАЦИЮ</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Нарушитель / Ник администратора</label>
+            <input type="text" id="targetName" placeholder="Ник обидчика / админа" required>
+        </div>
+        <div class="form-group">
+            <label>Суть нарушения / Описание ситуации</label>
+            <textarea id="description" placeholder="Подробно опишите: где, когда, что произошло..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Доказательства (скрины / видео / свидетели) — текстова
+я ссылка или описание</label>
+            <input type="text" id="evidence" placeholder="Например: ссылка на скрин или id записи">
+        </div>
+        <button class="btn-submit" id="submitComplaint">▸ ОПУБЛИКОВАТЬ ЖАЛОБУ ◂</button>
+    </div>
+
+    <div style="margin: 10px 0 20px 0; display: flex; justify-content: space-between; align-items: baseline;">
+        <h2 style="border-left: 4px solid #9b59b6; padding-left: 15px;">📢 Активные жалобы</h2>
+        <button id="clearAllBtn" style="background: none; border: 1px solid #4a4a4a; padding: 6px 15px; border-radius: 40px; color: #aaa; cursor: pointer;">🗑️ Очистить все</button>
+    </div>
+
+    <div id="complaintsContainer" class="complaints-list">
+        <div class="empty-msg">🕯️ Жалоб пока нет. Будь первым, кто восстановит справедливость на Secret RP.</div>
+    </div>
+    <footer>
+        SECRET RP · доска для жалоб на игроков и администрацию · все данные хранятся локально в браузере
+    </footer>
+</div>
+
+<script>
+    const STORAGE_KEY = "secretrp_complaints";
+
+    function loadComplaints() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            try {
+                return JSON.parse(stored);
+            } catch(e) { 
+                return []; 
+            }
+        }
+        return [
+            {
+                id: Date.now() + 1,
+                author: "ShadowAgent",
+                type: "player",
+                target: "DarkKiller",
+                description: "Мешает отыгрывать, постоянно гриферует, игнорирует правила RP.",
+                evidence: "видео с записью экрана",
+                timestamp: new Date(Date.now() - 86400000).toLocaleString()
+            },
+            {
+                id: Date.now() + 2,
+                author: "VeteranRP",
+                type: "admin",
+                target: "Admin_Max",
+                description: "Выдал предупреждение без объяснения причин, не реагирует на вопросы.",
+                evidence: "скриншот чата",
+                timestamp: new Date(Date.now() - 43200000).toLocaleString()
+            }
+        ];
+    }
+
+    let complaints = loadComplaints();
+    let currentFilter = "all";
+
+    function saveComplaints() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(complaints));
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "'");
+    }
+
+    function renderComplaints() {
+        const container = document.getElementById("complaintsContainer");
+        if (!container) return;
+
+        let filtered = [];
+        if (currentFilter === "all") filtered = [...complaints];
+        else if (currentFilter === "player") filtered = complaints.filter(c => c.type === "player");
+        else if (currentFilter === "admin") filtered = complaints.filter(c => c.type === "admin");
+
+        filtered.sort((a,b) => b.id - a.id);
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<div class="empty-msg">🔮 Нет жалоб по выбранному фильтру. Напиши о проблеме выше. 🔮</div>`;
+            return;
+        }
+
+        let html = "";
+        for (let comp of filtered) {
+            const typeLabel = comp.type === "player" ? "👥 ЖАЛОБА НА ИГРОКА" : "⚙️ ЖАЛОБА НА АДМИНИСТРАЦИЮ";
+            const typeClass = comp.type === "player" ? "type-player" : "type-admin";
+            html += `
+                <div class="complaint-item">
+                    <div class="complaint-header">
+                        <span class="player-name">${escapeHtml(comp.target)}</span>
+                        <span class="complaint-type ${typeClass}">${typeLabel}</span>
+                    </div>
+                    <div style="font-size: 0.85rem; color: #bbbbbb;">📛 Отправитель: ${escapeHtml(comp.author || "Аноним")}</div>
+                    <div class="complaint-reason">
+                        ?
+񃀠${escapeHtml(comp.description)}
+                    </div>
+                    <div class="evidence">
+                        🧾 Доказательства: ${comp.evidence ? escapeHtml(comp.evidence) : "не указаны"}
+                    </div>
+                    <div class="date">
+                        🕒 ${comp.timestamp || "неизвестная дата"}
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    }
+
+    function addComplaint(author, type, target, description, evidence) {
+        if (!target || target.trim() === "") {
+            alert("❌ Укажите ник нарушителя или администратора!");
+            return false;
+        }
+        if (!description || description.trim() === "") {
+            alert("❌ Опишите суть нарушения, чтобы администрация разобралась.");
+            return false;
+        }
+        const newComplaint = {
+            id: Date.now(),
+            author: author ? author.trim() : "Аноним",
+            type: type,
+            target: target.trim(),
+            description: description.trim(),
+            evidence: evidence ? evidence.trim() : "не приложено",
+            timestamp: new Date().toLocaleString()
+        };
+        complaints.unshift(newComplaint);
+        saveComplaints();
+        renderComplaints();
+        return true;
+    }
+
+    function clearAllComplaints() {
+        if (confirm("⚠️ ВНИМАНИЕ! Все жалобы будут удалены навсегда. Вы уверены?")) {
+            complaints = [];
+            saveComplaints();
+            renderComplaints();
+        }
+    }
+
+    function bindFilters() {
+        const btns = document.querySelectorAll(".filter-btn");
+        btns.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const filter = btn.getAttribute("data-filter");
+                if (filter === "all") currentFilter = "all";
+                else if (filter === "player") currentFilter = "player";
+                else if (filter === "admin") currentFilter = "admin";
+                
+                btns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                renderComplaints();
+            });
+        });
+    }
+
+    function initForm() {
+        const submitBtn = document.getElementById("submitComplaint");
+        if (submitBtn) {
+            submitBtn.addEventListener("click", () => {
+                const author = document.getElementById("authorName").value;
+                const type = document.getElementById("complainType").value;
+                const target = document.getElementById("targetName").value;
+                const description = document.getElementById("description").value;
+                const evidence = document.getElementById("evidence").value;
+                
+                const success = addComplaint(author, type, target, description, evidence);
+                if (success) {
+                    document.getElementById("targetName").value = "";
+                    document.getElementById("description").value = "";
+                    document.getElementById("evidence").value = "";
+                    alert("✅ Жалоба отправлена! Администрация Secret RP рассмотрит заявку.");
+                }
+            });
+        }
+
+        const clearBtn = document.getElementById("clearAllBtn");
+        if (clearBtn) {
+            clearBtn.addEventListener("click", clearAllComplaints);
+        }
+    }
+
+    function start() {
+        bindFilters();
+        initForm();
+        renderComplaints();
+    }
+
+    start();
+</script>
+</body>
+</html>
